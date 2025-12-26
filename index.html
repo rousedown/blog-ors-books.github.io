@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vórtice Oscuro </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --dark-bg: #0a0a0a;
+            --card-bg: #111111;
+            --accent-dark: #1a1a1a;
+            --neon-purple: #8a2be2;
+            --neon-pink: #ff00ff;
+            --neon-cyan: #00ffff;
+            --text-primary: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --border-color: #222222;
+            --glow-intensity: 0.6;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 20%);
+        }
+        
+        /* Efecto de partículas sutiles */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header y navegación */
+        header {
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo span {
+            color: var(--neon-purple);
+            text-shadow: 0 0 5px var(--neon-purple);
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            bottom: -5px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+        
+        nav a:hover {
+            color: var(--neon-cyan);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            background: var(--neon-cyan);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Contenido principal */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        /* Artículos del blog */
+        .articles {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .article-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-purple);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.2);
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+            transform-origin: left;
+        }
+        
+        .article-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .article-image {
+            height: 220px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .article-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 60%, var(--card-bg) 100%);
+        }
+        
+        .article-content {
+            padding: 25px;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .article-category {
+            color: var(--neon-pink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .article-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        
+        .article-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .article-title a:hover {
+            color: var(--neon-cyan);
+        }
+        
+        .article-excerpt {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: var(--neon-purple);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+            padding-bottom: 3px;
+        }
+        
+        .read-more::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: var(--neon-purple);
+            bottom: 0;
+            left: 0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: right;
+        }
+        
+        .read-more:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .sidebar-widget {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+        }
+        
+        .widget-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--neon-cyan);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .widget-title::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--neon-cyan);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .about-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-dark);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--neon-purple);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .categories-list {
+            list-style: none;
+        }
+        
+        .categories-list li {
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        
+        .categories-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .categories-list a:hover {
+            color: var(--neon-pink);
+        }
+        
+        .category-count {
+            color: var(--neon-purple);
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--accent-dark);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--neon-cyan);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+        
+        /* Efectos psicodélicos sutiles */
+        .glow-text {
+            text-shadow: 0 0 5px currentColor;
+        }
+        
+        .pulse {
+            animation: pulse 4s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+        
+        .neon-border {
+            position: relative;
+        }
+        
+        .neon-border::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink), var(--neon-cyan), var(--neon-purple));
+            background-size: 400% 400%;
+            z-index: -1;
+            animation: neonGlow 8s ease infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .neon-border:hover::after {
+            opacity: 0.5;
+        }
+        
+        @keyframes neonGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Tema toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            color: var(--neon-pink);
+            border-color: var(--neon-pink);
+            transform: rotate(30deg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fondo -->
+    <div id="particles"></div>
+    
+    <!-- Botón de cambio de tema -->
+    <div class="theme-toggle" id="themeToggle">
+        <i class="fas fa-palette"></i>
+    </div>
+    
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    Vórtice<span>Oscuro</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active">Inicio</a></li>
+                        <li><a href="#">Artículos</a></li>
+                        <li><a href="#">Categorías</a></li>
+                        <li><a href="#">Acerca de</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+<center>
+     <h1 class="rgb">Bienvenido</h1>
+     <br>
+<style>
+.rgb {
+    background: linear-gradient(90deg, 
+        #ff0000, #ff9900, #ffff00, 
+        #00ff00, #00ffff, #0000ff, 
+        #9900ff, #ff00ff, #ff0000);
+    background-size: 1000% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rgb-animation 3s linear infinite;
+}
+
+@keyframes rgb-animation {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+</style> 
+    </center>
+
+<header>
+    <div class="container">
+    <div class="main-content">
+        <div>
+            <center>
+
+            <p class="introduccion">Sitio web desarrollado, BLOG, PDF, STREAM</p>
+            
+            <br>
+
+
+        
+            </center>
+        </div>
+    </div>
+ </div>
+</header>
+
+
+
+
+
+
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Artículos del blog -->
+             
+            <div class="articles">
+                <!-- Artículo 1 -->
+                <article class="article-card neon-border pulse">
+                    <div class="article-image" style="background-image: url('https://www.startpage.com/av/proxy-image?piurl=https%3A%2F%2Fthumbs.dreamstime.com%2Fb%2Fstunning-cosmic-images-381040522.jpg&sp=1766286510Tfa6cfbbe358ce81f3fef03f99fbe878739b0394b46cb0c954dac8e0de0927239');"></div>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date"><i class="far fa-calendar"></i> 20 de Diciembre, 2025</span>
+                            <span class="article-category">Vortice Digital</span>
+                        </div>
+
+                       
+
+                        <h2 class="article-title">
+                            <a href="https://www.mediafire.com/file/j5mbnuqykhgnphw/%2528Ebook_-_Conspiracy%252CSecret%252CCover-Up%2529_-_Symbols_Of_The_Invisible_Fraternity_Of_Freemasons.pdf/file">(Ebook - Conspiracy,Secret,Cover-Up) - Symbols Of The Invisible Fraternity Of Freemasons</a>
+                        </h2>
+                        <p class="article-excerpt">Simbolos.</p>
+                        <a href="#" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                
+                <!-- Artículo 2 -->
+                <article class="article-card neon-border">
+                    <div class="article-image" style="background-image: url('https://www.startpage.com/av/proxy-image?piurl=https%3A%2F%2Fpsicologiaysentido.es%2Fwp-content%2Fuploads%2F2021%2F02%2Fpsicologia-cuantica-psicologos-gandia-450x200.jpg&sp=1766287252T70eb3e982a89568a6292caf319d0d2c88e5227646c9301ad227e6cdef0cef546');"></div>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date"><i class="far fa-calendar"></i> 20 Diciembre, 2025</span>
+                            <span class="article-category">Realidad Oscura</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="https://www.mediafire.com/file/6wfb521kwyyl4la/98216037-Psicologia-cuantica.pdf/file">98216037-Psicologia-cuantica</a>
+                        </h2>
+                        <p class="article-excerpt">Este documento trata sobre la psicología cuántica y cómo el software cerebral programa al individuo y su percepción del mundo. Explica conceptos como el ruido semántico que puede causar malentendidos y cómo diferentes lectores pueden interpretar un texto de manera distinta. También incluye un glosario histórico sobre términos como existencialismo.</p>
+                        <a href="#" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                
+                <!-- Artículo 3 -->
+                <article class="article-card neon-border">
+                    <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');"></div>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date"><i class="far fa-calendar"></i> 1 de Octubre, 2023</span>
+                            <span class="article-category">Neuroestética</span>
+                        </div>
+                        <h2 class="article-title">
+                            <a href="#">Patrones Fractales y la Mente Humana</a>
+                        </h2>
+                        <p class="article-excerpt">Los fractales no solo existen en la naturaleza y el arte psicodélico, sino también en nuestra propia cognición. Descubre cómo estos patrones infinitos reflejan la estructura de nuestro pensamiento.</p>
+                        <a href="#" class="read-more">Leer más <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+            
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Widget About -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Sobre el Blog</h3>
+                    <p class="about-text">Vórtice Oscuro explora la intersección entre el diseño minimalista, la estética psicodélica y la filosofía oscura. Un espacio para la reflexión visual y conceptual.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <!-- Widget Categorías -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Categorías</h3>
+                    <ul class="categories-list">
+                        <li>
+                            <a href="#">Psicodelia Digital <span class="category-count">12</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Minimalismo Oscuro <span class="category-count">8</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Neuroestética <span class="category-count">5</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Filosofía Visual <span class="category-count">7</span></a>
+                        </li>
+                        <li>
+                            <a href="#">Tecnología y Conciencia <span class="category-count">9</span></a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Widget Newsletter -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Suscríbete</h3>
+                    <p class="about-text">Recibe artículos exclusivos y reflexiones sobre estética psicodélica y minimalismo oscuro directamente en tu correo.</p>
+                    <form id="newsletterForm" style="margin-top: 15px;">
+                        <input type="email" placeholder="tu@email.com" style="width: 100%; padding: 12px; background-color: var(--accent-dark); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); margin-bottom: 10px;">
+                        <button type="submit" style="width: 100%; padding: 12px; background-color: var(--neon-purple); color: white; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease;">Suscribirse</button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="copyright">
+                    &copy; 2023 Vórtice Oscuro. Todos los derechos reservados.
+                </div>
+                <div class="footer-links">
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Términos de Uso</a>
+                    <a href="#">Contacto</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Crear partículas para el fondo
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = Math.random() * 3 + 1 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.backgroundColor = i % 3 === 0 ? 'rgba(138, 43, 226, 0.3)' : 
+                                            i % 3 === 1 ? 'rgba(255, 0, 255, 0.3)' : 
+                                            'rgba(0, 255, 255, 0.3)';
+            particle.style.borderRadius = '50%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.left = Math.random() * 100 + '%';
+            
+            // Añadir animación
+            particle.style.animation = `moveParticle ${Math.random() * 20 + 10}s linear infinite`;
+            
+            particlesContainer.appendChild(particle);
+        }
+        
+        // Añadir keyframes para la animación de partículas
+        const styleSheet = document.createElement('style');
+        styleSheet.innerHTML = `
+            @keyframes moveParticle {
+                0% {
+                    transform: translate(0, 0);
+                }
+                25% {
+                    transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                }
+                50% {
+                    transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                }
+                75% {
+                    transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+                }
+                100% {
+                    transform: translate(0, 0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        
+        // Efecto de cambio de tema
+        const themeToggle = document.getElementById('themeToggle');
+        let isDarkMode = true;
+        
+        themeToggle.addEventListener('click', function() {
+            const root = document.documentElement;
+            
+            if (isDarkMode) {
+                // Cambiar a modo psicodélico vibrante
+                root.style.setProperty('--dark-bg', '#050505');
+                root.style.setProperty('--card-bg', '#0a0a0a');
+                root.style.setProperty('--accent-dark', '#151515');
+                root.style.setProperty('--neon-purple', '#bf00ff');
+                root.style.setProperty('--neon-pink', '#ff00aa');
+                root.style.setProperty('--neon-cyan', '#00ffcc');
+                root.style.setProperty('--text-primary', '#f0f0f0');
+                root.style.setProperty('--glow-intensity', '0.8');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                // Volver al modo original
+                root.style.setProperty('--dark-bg', '#0a0a0a');
+                root.style.setProperty('--card-bg', '#111111');
+                root.style.setProperty('--accent-dark', '#1a1a1a');
+                root.style.setProperty('--neon-purple', '#8a2be2');
+                root.style.setProperty('--neon-pink', '#ff00ff');
+                root.style.setProperty('--neon-cyan', '#00ffff');
+                root.style.setProperty('--text-primary', '#e0e0e0');
+                root.style.setProperty('--glow-intensity', '0.6');
+                themeToggle.innerHTML = '<i class="fas fa-palette"></i>';
+            }
+            
+            isDarkMode = !isDarkMode;
+        });
+        
+        // Efecto de suscripción al newsletter
+        const newsletterForm = document.getElementById('newsletterForm');
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = this.querySelector('input[type="email"]');
+            
+            if (emailInput.value && emailInput.value.includes('@')) {
+                // Efecto visual de éxito
+                const button = this.querySelector('button');
+                const originalText = button.textContent;
+                button.textContent = '¡Gracias!';
+                button.style.backgroundColor = 'var(--neon-cyan)';
+                button.style.color = 'var(--dark-bg)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = 'var(--neon-purple)';
+                    button.style.color = 'white';
+                    emailInput.value = '';
+                }, 2000);
+            } else {
+                // Efecto visual de error
+                emailInput.style.borderColor = 'var(--neon-pink)';
+                setTimeout(() => {
+                    emailInput.style.borderColor = 'var(--border-color)';
+                }, 2000);
+            }
+        });
+        
+        // Efecto de resaltado en enlaces de navegación
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.classList.add('glow-text');
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                this.classList.remove('glow-text');
+            });
+        });
+    </script>
+</body>
+</html>
